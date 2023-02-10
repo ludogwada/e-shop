@@ -1,9 +1,35 @@
 const express = require('express');
+const cors = require('cors');
+const mongoose = require('mongoose');
+const dotenv = require('dotenv');
 const app = express();
 const port = 4000;
 
-app.get('/', (req, res) => {
-	res.send('Hello express!');
+app.use(cors());
+dotenv.config();
+
+mongoose.set('strictQuery', false);
+mongoose.connect(process.env.STRING_URI);
+
+//API Rest
+const Product = require('./models/product');
+app.get('/products', async (req, res) => {
+	const products = await Product.find({});
+	try {
+		res.send(products);
+	} catch (error) {
+		res.status(500).send(error);
+	}
+});
+
+app.get('/products/:category', async (req, res) => {
+	const category = req.params.category;
+	const products = await Product.find({ category: category });
+	try {
+		res.send(products);
+	} catch (error) {
+		res.status(500).send(error);
+	}
 });
 
 app.listen(port, () => {
