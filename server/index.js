@@ -3,6 +3,9 @@ const cors = require('cors');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const app = express();
+const { graphqlHTTP } = require('express-graphql');
+const schema = require('./schemas/index.js');
+
 const port = 4000;
 
 app.use(cors());
@@ -31,6 +34,15 @@ app.get('/products/:category', async (req, res) => {
 		res.status(500).send(error);
 	}
 });
+
+//GraphQL
+app.use(
+	'/graphql',
+	graphqlHTTP({
+		schema: schema,
+		graphiql: true,
+	})
+);
 
 app.listen(port, () => {
 	console.log(`Example app listening on port ${port}`);
